@@ -154,6 +154,11 @@ formatters.setup {
 --     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
     filetypes = { "typescript", "typescriptreact" },
   },
+
+  {
+    command = "sql-formatter",
+    filetypes = { "sql" },
+  },
 }
 
 -- -- set additional linters
