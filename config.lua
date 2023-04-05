@@ -130,6 +130,13 @@ lvim.lsp.installer.setup.ensure_installed = {
 --   return server ~= "emmet_ls"
 -- end, lvim.lsp.automatic_configuration.skipped_servers)
 
+-- sqlls
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "sqlls" })
+require("lvim.lsp.manager").setup("sqlls", {
+  cmd = { "sql-language-server", "up", "--method", "stdio" },
+  filetypes = { "sql", "mysql" },
+})
+
 -- -- you can set a custom on_attach function that will be used for all the language servers
 -- -- See <https://github.com/neovim/nvim-lspconfig#keybindings-and-completion>
 -- lvim.lsp.on_attach_callback = function(client, bufnr)
