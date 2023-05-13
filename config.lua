@@ -12,6 +12,7 @@ an executable
 vim.opt.relativenumber = true
 vim.opt.wrap = true
 vim.opt.linebreak = true
+vim.opt.colorcolumn = '100'
 
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
