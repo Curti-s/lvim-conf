@@ -17,10 +17,11 @@ vim.opt.relativenumber = true
 vim.opt.wrap = true
 vim.opt.linebreak = true
 vim.opt.colorcolumn = '100'
+-- vim.opt.bg="light"
 
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
-lvim.colorscheme = "lunar"
+lvim.colorscheme = "gruvbox"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -123,7 +124,7 @@ lvim.builtin.treesitter.highlight.enable = true
 
 -- -- make sure server will always be installed even if the server is in skipped_servers list
 lvim.lsp.installer.setup.ensure_installed = {
-    "sumneko_lua",
+    -- "sumneko_lua",
     "jsonls",
 }
 -- -- change UI setting of `LspInstallInfo`
@@ -290,12 +291,6 @@ lvim.plugins = {
     end,
     ft = {"markdown"},
   },
-  { "mxsdev/nvim-dap-vscode-js", requires = { "mfussenegger/nvim-dap" } },
-  {
-    "microsoft/vscode-js-debug",
-    opt = true,
-    run = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out"
-  }
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
