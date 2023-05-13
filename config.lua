@@ -272,6 +272,15 @@ lvim.plugins = {
   {
     "ellisonleao/gruvbox.nvim",
   },
+  {
+    "ellisonleao/glow.nvim",
+    config = function()
+      require("glow").setup({
+        width = 120
+      })
+    end,
+    ft = {"markdown"},
+  },
   { "mxsdev/nvim-dap-vscode-js", requires = { "mfussenegger/nvim-dap" } },
   {
     "microsoft/vscode-js-debug",
