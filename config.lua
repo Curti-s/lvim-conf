@@ -184,7 +184,7 @@ formatters.setup {
   },
 
   {
-    command = "sql-formatter",
+    command = "pg_format",
     filetypes = { "sql" },
   },
 }
