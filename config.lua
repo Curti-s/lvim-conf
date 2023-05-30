@@ -115,6 +115,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "rust",
   "java",
   "yaml",
+  "sql",
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -309,7 +310,12 @@ lvim.plugins = {
         post_hook = nil,             -- Function to run after the scrolling animation ends
       })
     end
-  }, }
+  },
+  {
+    "sindrets/diffview.nvim",
+    event = "BufRead",
+  },
+}
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- vim.api.nvim_create_autocmd("BufEnter", {
