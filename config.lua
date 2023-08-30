@@ -216,44 +216,39 @@ linters.setup {
 
 
 -- dap configuration
-local dap = require('dap')
-dap.adapters.node = {
-  type = 'executable',
-  command = 'node'
-}
+local js_languages = { "typescript", "typescriptreact", "javascript" }
 
--- require("dap-vscode-js").setup({
---   -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
---   -- debugger_path = "(runtimedir)/site/pack/packer/opt/vscode-js-debug", -- Path to vscode-js-debug installation.
---   debugger_path = "~/.local/share/lunarvim/site/pack/packer/opt/vscode-js-debug",
---   -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
---   adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
---   -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
---   -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
---   log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
--- })
-
-for _, language in ipairs({ "typescript", "javascript" }) do
+for _, language in ipairs(js_languages) do
   require("dap").configurations[language] = {
+    -- node conf
     {
-      -- node conf
-      {
-        type = "pwa-node",
-        request = "launch",
-        name = "Launch file",
-        program = "${file}",
-        cwd = "${workspaceFolder}",
-      },
-      {
-        type = "pwa-node",
-        request = "attach",
-        name = "Attach",
-        processId = require 'dap.utils'.pick_process,
-        cwd = "${workspaceFolder}",
-      },
-    }
+      type = "pwa-node",
+      request = "launch",
+      name = "Launch file",
+      program = "${file}",
+      cwd = "${workspaceFolder}",
+    },
+    {
+      type = "pwa-node",
+      request = "attach",
+      name = "Attach NodeJs",
+      processId = require 'dap.utils'.pick_process,
+      cwd = "${workspaceFolder}",
+    },
   }
 end
+
+-- https://github.com/neovim/neovim/issues/21749#issuecomment-1378720864
+-- Fix loading of json5
+table.insert(vim._so_trails, "/?.dylib")
+require('dap.ext.vscode').load_launchjs(nil,
+  { ['pwa-node'] = js_languages,
+    ['node'] = js_languages,
+    ['chrome'] = js_languages,
+    ['pwa-chrome'] = js_languages }
+)
+-- end
+
 
 -- Additional Plugins
 lvim.plugins = {
@@ -316,6 +311,36 @@ lvim.plugins = {
   {
     "sindrets/diffview.nvim",
     event = "BufRead",
+  },
+  {
+    "mfussenegger/nvim-dap",
+  },
+  {
+    "mxsdev/nvim-dap-vscode-js",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+    },
+    config = function()
+      require("dap-vscode-js").setup({
+        -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
+        debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug", -- Path to vscode-js-debug installation. Also installation was done manually i.e clone & build
+        -- debugger_cmd = { "extension" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+        adapters = { 'chrome', 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost', 'node', 'chrome' }, -- which adapters to register in nvim-dap
+        -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
+        -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
+        -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
+      })
+    end
+  },
+  {
+    'Joakker/lua-json5',
+    build = './install.sh'
+  },
+  {
+    'theHamsta/nvim-dap-virtual-text',
+    config = function()
+      require("nvim-dap-virtual-text").setup()
+    end,
   },
 }
 
