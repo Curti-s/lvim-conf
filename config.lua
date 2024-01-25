@@ -216,10 +216,25 @@ linters.setup {
 
 
 -- dap configuration
-local js_languages = { "typescript", "typescriptreact", "javascript" }
+lvim.builtin.dap.active = true
 
+local dap, dapui = require("dap"), require("dapui")
+
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
+
+local js_languages = { "typescript", "typescriptreact", "javascript" }
 for _, language in ipairs(js_languages) do
-  require("dap").configurations[language] = {
+  dap.configurations[language] = {
     -- node conf
     {
       type = "pwa-node",
@@ -237,6 +252,38 @@ for _, language in ipairs(js_languages) do
     },
   }
 end
+
+dap.adapters.cppdbg = {
+  id = 'cppdbg',
+  type = 'executable',
+  command = vim.fn.stdpath("data") .. "/mason/packages/cpptools/extension/debugAdapters/bin/OpenDebugAD7",
+}
+
+dap.configurations.cpp = {
+  {
+    name = "Launch file",
+    type = "cppdbg",
+    request = "launch",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    MIMode = 'lldb',
+    stopAtEntry = true,
+  },
+  {
+    name = 'Attach to gdbserver :1234',
+    type = 'cppdbg',
+    request = 'launch',
+    MIMode = 'gdb',
+    miDebuggerServerAddress = 'localhost:1234',
+    miDebuggerPath = '/usr/bin/gdb',
+    cwd = '${workspaceFolder}',
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+  },
+}
 
 -- https://github.com/neovim/neovim/issues/21749#issuecomment-1378720864
 -- Fix loading of json5
@@ -311,9 +358,6 @@ lvim.plugins = {
   {
     "sindrets/diffview.nvim",
     event = "BufRead",
-  },
-  {
-    "mfussenegger/nvim-dap",
   },
   {
     "mxsdev/nvim-dap-vscode-js",
